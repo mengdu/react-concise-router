@@ -2,6 +2,7 @@
   "name": "react-component-devtool",
   "version": "0.1.0",
   "description": "Build tools For React Component.",
+  "main": "index.js",
   "devDependencies": {
     "autoprefixer": "7.1.6",
     "babel-core": "6.26.0",
