@@ -26,9 +26,24 @@ function reslove () {
   return paths.join('/')
 }
 
+/**
+* 编译字符串 :var
+* @param {string} tpl
+* @return {function} 返回函数
+**/
+function compileString (tpl) {
+  let expression = tpl.replace(/(\'|\")/g, '\\$1')
+    .replace(/\:(\w+)/g, function (txt, key) {
+      console.log(txt, key)
+      return '\' + data[\'' + key + '\'] + \''
+    })
+  return new Function('data', 'return \'' + expression + '\'')
+}
+
 export default class Router {
   constructor (router) {
     let routes = router.routes
+    this.routes = []
     if (router.mode && ['hash', 'history'].indexOf(router.mode.toLocaleLowerCase()) === -1) {
       throw new Error('The router.mode value must be \'hash\' or \'history\'.')
     }
@@ -48,6 +63,7 @@ export default class Router {
           if (child.path && child.path !== '*') {
             path = reslove('/', routes[i].path, routes[i].children[j].path)
           }
+          this.routes.push({...child, path})
           this.routerMap[routes[i].name].push(makeRoute({
             ...routes[i].children[j],
             exact: true,
@@ -55,6 +71,7 @@ export default class Router {
           }))
         }
       } else {
+        this.routes.push(routes[i])
         this.routerMap['default'].push(makeRoute({...routes[i], exact: true}))
       }
     }
@@ -96,5 +113,19 @@ export default class Router {
         </Switch>
       )
     }
+  }
+  // 生成push函数参数
+  route (args) {
+    if (!args || typeof args !== 'object') {
+      throw new Error('The arguments[0] must be an object.')
+    }
+    let {params, query, hash, path, name} = args
+    if (name) {
+      let route = this.routes.filter(e => e.name === name)[0]
+      if (!route) throw new Error('The name \'' + name + '\' is not found in route list.')
+      path = route.path
+    }
+    path = compileString(path)(params)
+    return {}
   }
 }

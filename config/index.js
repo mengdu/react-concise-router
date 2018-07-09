@@ -18,7 +18,7 @@ module.exports = {
     appPublic: resolve('public'),
     autoOpenBrowser: false,
     outputPath: resolve('docs'),
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
     sourceMap: true
   },
   pack: {

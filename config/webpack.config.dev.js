@@ -11,15 +11,10 @@ const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const config = require('./index')
 
 
-// Webpack uses `publicPath` to determine where the app is being served from.
-// In development, we always serve from the root. This makes config easier.
-const publicPath = config.dev.assetsPublicPath;
-// `publicUrl` is just like `publicPath`, but we will provide it to our app
-// as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
-// Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
-const publicUrl = publicPath.slice(0, -1);;
-// Get environment variables to inject into our app.
 
+const publicPath = '/';
+// Get environment variables to inject into our app.
+// process.exit()
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
@@ -215,7 +210,7 @@ module.exports = {
     // In development, this will be an empty string.
     new InterpolateHtmlPlugin({
       NODE_ENV: process.env.NODE_ENV || 'development',
-      PUBLIC_URL: publicUrl
+      PUBLIC_URL: ''
     }),
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
@@ -229,7 +224,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-        PUBLIC_URL: JSON.stringify(publicUrl),
+        PUBLIC_URL: JSON.stringify(publicPath),
         DEMO: JSON.stringify({
           info: 'this is a test.'
         })

@@ -19,6 +19,7 @@ export default new Router ({
 
       children: [
         {path: '/', component: Dashboard},
+        {path: '/test', component: Dashboard},
         {component: ErrorPage}
       ]
     },
