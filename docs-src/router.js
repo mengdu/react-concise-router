@@ -2,11 +2,12 @@ import Router from '~/src'
 import Home from './views/Home'
 import User from './views/User'
 import UserInfo from './views/UserInfo'
-import Error from './views/Error'
+import ErrorPage from './views/Error'
 import view from './views/admin/view'
 import Dashboard from './views/admin/Dashboard'
 
 export default new Router ({
+  mode: 'hash',
   routes: [
     {path: '/', component: Home},
     {path: '/user', component: User},
@@ -18,9 +19,9 @@ export default new Router ({
 
       children: [
         {path: '/', component: Dashboard},
-        {component: Error}
+        {component: ErrorPage}
       ]
     },
-    {path: '*', component: Error},
+    {path: '*', component: ErrorPage},
   ]
 })

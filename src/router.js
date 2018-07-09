@@ -1,5 +1,5 @@
 import React from 'react'
-import {BrowserRouter, Route, Switch, Link} from 'react-router-dom'
+import {HashRouter, BrowserRouter, Route, Switch, Link} from 'react-router-dom'
 // import RouterWrapper from './router-wrapper'
 
 function makeRoute (route) {
@@ -29,6 +29,10 @@ function reslove () {
 export default class Router {
   constructor (router) {
     let routes = router.routes
+    if (router.mode && ['hash', 'history'].indexOf(router.mode.toLocaleLowerCase()) === -1) {
+      throw new Error('The router.mode value must be \'hash\' or \'history\'.')
+    }
+    this.mode = router.mode || 'history'
     this.routerMap = {
       'default': []
     }
@@ -68,13 +72,23 @@ export default class Router {
       if (!this.routerMap[name]) throw new Error('The view name `' + name + '` is not defined.')
       let that = this
       if (name === 'default') {
-        return (
-          <BrowserRouter>
-            <Switch>
-              {that.routerMap[name]}
-            </Switch>
-          </BrowserRouter>
-        )
+        if (this.mode === 'hash') {
+          return (
+            <HashRouter>
+              <Switch>
+                {that.routerMap[name]}
+              </Switch>
+            </HashRouter>
+          )
+        } else {
+          return (
+            <BrowserRouter>
+              <Switch>
+                {that.routerMap[name]}
+              </Switch>
+            </BrowserRouter>
+          )
+        }
       }
       return (
         <Switch>
