@@ -74,7 +74,8 @@ module.exports = {
   },
   externals: {
     "react": 'react',
-    'react-dom': 'ReactDOM'
+    'react-router-dom': 'react-router-dom',
+    'react-dom': 'react-dom'
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.

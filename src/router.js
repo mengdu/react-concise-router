@@ -1,5 +1,5 @@
 import React from 'react'
-import {BrowserRouter, Route, Switch} from 'react-router-dom'
+import {BrowserRouter, Route, Switch, Link} from 'react-router-dom'
 // import RouterWrapper from './router-wrapper'
 
 function makeRoute (route) {
@@ -40,8 +40,8 @@ export default class Router {
         for (let j in routes[i].children) {
           let child = routes[i].children[j]
           let path = ''
-          // name === 404表示404页面
-          if (child.name !== 404) {
+          // 非404页面需要处理下路径
+          if (child.path && child.path !== '*') {
             path = reslove('/', routes[i].path, routes[i].children[j].path)
           }
           this.routerMap[routes[i].name].push(makeRoute({
@@ -56,24 +56,11 @@ export default class Router {
     }
   }
 
-  // view (name = 'default') {
-  //   if (!this.routerMap[name]) throw new Error('The view name `' + name + '` is not defined.')
-  //   let that = this
-  //   if (name === 'default') {
-  //     return (
-  //       <BrowserRouter>
-  //         <Switch>
-  //           {that.routerMap[name]}
-  //         </Switch>
-  //       </BrowserRouter>
-  //     )
-  //   }
-  //   return (
-  //     <Switch>
-  //       {that.routerMap[name]}
-  //     </Switch>
-  //   )
-  // }
+  get link () {
+    return (props) => {
+      return <Link to={props.to}>{props.children}</Link>
+    }
+  }
 
   get view () {
     return (props) => {

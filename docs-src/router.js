@@ -17,9 +17,10 @@ export default new Router ({
       name: 'admin-view',
 
       children: [
-        {path: '/', component: Dashboard}
+        {path: '/', component: Dashboard},
+        {component: Error}
       ]
     },
-    {name: 404, component: Error},
+    {path: '*', component: Error},
   ]
 })
