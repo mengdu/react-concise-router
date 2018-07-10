@@ -72,4 +72,20 @@ export default class App extends React.Component {
 
 ## API
 
-> 正在完善...
+```js
+import Router from 'react-concise-router'
+```
+
+**new Router(options)** 创建路由对象，返回router。
+
+
+
++ **<router.view />** 路由出口。
+  - **props.name** string 路由出口子名称，在 `options.routes[].name` 设置。
+
++ **<router.link to={{}}>xxx</router.link>** object|string 路径或者路径对象。
+
++ **router.route(route)** 生成url，用于history.push。
+
++ **router.beforeEach(cxt, next)** 路由切换中间件
+
