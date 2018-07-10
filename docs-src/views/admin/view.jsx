@@ -6,6 +6,7 @@ export default class View extends React.Component {
       <div>
         Admin Page.
         <p>
+          <router.link to="/">Home</router.link>
           <router.link to="/admin">Dashboard</router.link>
           <router.link to="/admin/404">404</router.link>
         </p>

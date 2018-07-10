@@ -10,6 +10,7 @@ export default class Home extends React.Component {
         <p>
           <Link to="/" >Home</Link>
           <Link to="/user" >User</Link>
+          <Link to="/admin" >Dashboard</Link>
           <Link to="/404" >404</Link>
         </p>
       </div>

@@ -6,7 +6,7 @@ import ErrorPage from './views/Error'
 import view from './views/admin/view'
 import Dashboard from './views/admin/Dashboard'
 
-export default new Router ({
+const router = new Router ({
   mode: 'hash',
   routes: [
     {path: '/', component: Home},
@@ -26,3 +26,17 @@ export default new Router ({
     {path: '*', component: ErrorPage},
   ]
 })
+
+router.beforeEach = function (ctx, next) {
+  console.log('start', ctx)
+  if (ctx.route.name === 'info') {
+    next('/')
+  } else {
+    setTimeout(() => {
+      next()
+    }, 100)
+  }
+}
+
+
+export default router
