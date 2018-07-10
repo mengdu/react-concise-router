@@ -17,13 +17,13 @@ function makeRoute (route, router) {
 }
 
 export default class Router {
-  constructor (router) {
-    let routes = router.routes
+  constructor (options) {
+    let routes = options.routes
     this.routes = []
-    if (router.mode && ['hash', 'history'].indexOf(router.mode.toLocaleLowerCase()) === -1) {
-      throw new Error('The router.mode value must be \'hash\' or \'history\'.')
+    if (options.mode && ['hash', 'history'].indexOf(options.mode.toLocaleLowerCase()) === -1) {
+      throw new Error('The options.mode value must be \'hash\' or \'history\'.')
     }
-    this.mode = router.mode || 'history'
+    this.mode = options.mode || 'history'
     this.routerMap = {
       'default': []
     }
