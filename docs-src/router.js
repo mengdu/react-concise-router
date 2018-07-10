@@ -11,7 +11,7 @@ export default new Router ({
   routes: [
     {path: '/', component: Home},
     {path: '/user', component: User},
-    {path: '/user/:userId', component: UserInfo},
+    {path: '/user/:userId', name: 'info', component: UserInfo},
     {
       path: '/admin',
       component: view,

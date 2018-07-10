@@ -1,6 +1,7 @@
 import React from 'react'
 import {HashRouter, BrowserRouter, Route, Switch, Link} from 'react-router-dom'
 // import RouterWrapper from './router-wrapper'
+import {reslove, compileString, objectToQueryString} from './utils'
 
 function makeRoute (route) {
   // {/*render={(props) => <RouterWrapper {...props}>{route.component}</RouterWrapper>}*/}
@@ -12,32 +13,6 @@ function makeRoute (route) {
       component={route.component}
       />
   )
-}
-
-/**
-* @param {string} path 路径
-* @return {string} 返回连接路径
-**/
-function reslove () {
-  let paths = []
-  for (let i in arguments) {
-    paths.push(arguments[i].replace(/^\s*|\s*$/g, '').replace(/^\//, ''))
-  }
-  return paths.join('/')
-}
-
-/**
-* 编译字符串 :var
-* @param {string} tpl
-* @return {function} 返回函数
-**/
-function compileString (tpl) {
-  let expression = tpl.replace(/(\'|\")/g, '\\$1')
-    .replace(/\:(\w+)/g, function (txt, key) {
-      console.log(txt, key)
-      return '\' + data[\'' + key + '\'] + \''
-    })
-  return new Function('data', 'return \'' + expression + '\'')
 }
 
 export default class Router {
@@ -77,12 +52,22 @@ export default class Router {
     }
   }
 
+  /**
+  * 路由出口
+  * e.g: <router.link to="/">Link</router.link>
+  * @props {string|object} to 同Link
+  **/
   get link () {
     return (props) => {
       return <Link to={props.to}>{props.children}</Link>
     }
   }
 
+  /**
+  * 路由出口
+  * e.g: <router.view />
+  * @props {string} name 子路由名称，默认default，根路由
+  **/
   get view () {
     return (props) => {
       const name = props.name || 'default'
@@ -114,7 +99,17 @@ export default class Router {
       )
     }
   }
-  // 生成push函数参数
+  
+  /**
+  * 生成push函数参数
+  * @param {object} args
+  * @param {string} args.name 路由名称
+  * @param {string} args.path 路由
+  * @param {object} args.query 查询参数对象
+  * @param {object} args.params 路由参数
+  * @param {string} args.hash hash值
+  * @return {string} 返回url
+  **/
   route (args) {
     if (!args || typeof args !== 'object') {
       throw new Error('The arguments[0] must be an object.')
@@ -126,6 +121,9 @@ export default class Router {
       path = route.path
     }
     path = compileString(path)(params)
-    return {}
+    const queryString = query ? ('?' + objectToQueryString(query)) : ''
+    hash = hash ? ('#' + hash) : ''
+
+    return `${path}${queryString}${hash}`
   }
 }
