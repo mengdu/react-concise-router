@@ -54,6 +54,11 @@
     "serve": "php -S localhost:3004 -t docs",
     "test": "node scripts/test.js --env=jsdom"
   },
+  "files": [
+    "dist",
+    "src",
+    "index.js"
+  ],
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,mjs}"
