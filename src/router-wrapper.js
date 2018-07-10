@@ -3,14 +3,26 @@ import React from 'react'
 * 用于包裹页面，实现切换事件
 **/
 export default class RouterWrapper extends React.Component {
-  componentWillMount () {
-    this.props.start && this.props.start()
+  state = {
+    waiting: true
   }
-  componentDidMount () {
-    // console.log('did')
-    this.props.done && this.props.done()
+  done () {
+    return (to) => {
+      if (to) {
+        const path = typeof to === 'string' ? to : this.props.router.route(to)
+        this.props.history.push(path)
+      } else {
+        this.setState({
+          waiting: false
+        })
+      }
+    }
+  }
+  componentWillMount () {
+    this.props.router.beforeEach && this.props.router.beforeEach(this.props, this.done())
   }
   render () {
+    if (this.state.waiting) return null
     // 这里要传递Route组件的props
     return <this.props.children {...this.props} />
   }

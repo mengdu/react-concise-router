@@ -1,16 +1,17 @@
 import React from 'react'
 import {HashRouter, BrowserRouter, Route, Switch, Link} from 'react-router-dom'
-// import RouterWrapper from './router-wrapper'
+import RouterWrapper from './router-wrapper'
 import {reslove, compileString, objectToQueryString} from './utils'
 
-function makeRoute (route) {
-  // {/*render={(props) => <RouterWrapper {...props}>{route.component}</RouterWrapper>}*/}
+function makeRoute (route, router) {
+  // render={(props) => <RouterWrapper {...props}>{route.component}</RouterWrapper>}
+  // component={route.component}
   return (
     <Route
       exact={route.exact}
       path={route.path}
       key={route.name ? route.name : route.path}
-      component={route.component}
+      render={(props) => <RouterWrapper {...props} route={route} router={router}>{route.component}</RouterWrapper>}
       />
   )
 }
@@ -29,7 +30,7 @@ export default class Router {
 
     for (let i in routes) {
       if (Array.isArray(routes[i].children)) {
-        this.routerMap['default'].unshift(makeRoute({...routes[i], exact: false}))
+        this.routerMap['default'].unshift(makeRoute({...routes[i], exact: false}, this))
         this.routerMap[routes[i].name] = []
         for (let j in routes[i].children) {
           let child = routes[i].children[j]
@@ -43,11 +44,11 @@ export default class Router {
             ...routes[i].children[j],
             exact: true,
             path: path
-          }))
+          }, this))
         }
       } else {
         this.routes.push(routes[i])
-        this.routerMap['default'].push(makeRoute({...routes[i], exact: true}))
+        this.routerMap['default'].push(makeRoute({...routes[i], exact: true}, this))
       }
     }
   }
@@ -58,9 +59,10 @@ export default class Router {
   * @props {string|object} to 同Link
   **/
   get link () {
-    return (props) => {
-      return <Link to={props.to}>{props.children}</Link>
+    const RouterLink = (props) => {
+      return <Link to={typeof props.to === 'object' ? this.route(props.to) : props.to}>{props.children}</Link>
     }
+    return RouterLink
   }
 
   /**
@@ -69,7 +71,7 @@ export default class Router {
   * @props {string} name 子路由名称，默认default，根路由
   **/
   get view () {
-    return (props) => {
+    const RouterView = (props) => {
       const name = props.name || 'default'
       if (!this.routerMap[name]) throw new Error('The view name `' + name + '` is not defined.')
       let that = this
@@ -98,6 +100,7 @@ export default class Router {
         </Switch>
       )
     }
+    return RouterView
   }
   
   /**
