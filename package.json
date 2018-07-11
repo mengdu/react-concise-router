@@ -1,7 +1,7 @@
 {
-  "name": "react-component-devtool",
+  "name": "react-concise-router",
   "version": "0.1.0",
-  "description": "Build tools For React Component.",
+  "description": "A concise router base on react-router. ",
   "main": "index.js",
   "devDependencies": {
     "autoprefixer": "7.1.6",
