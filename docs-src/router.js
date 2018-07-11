@@ -38,5 +38,4 @@ router.beforeEach = function (ctx, next) {
   }
 }
 
-
 export default router
