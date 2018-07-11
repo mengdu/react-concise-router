@@ -1,6 +1,6 @@
 {
   "name": "react-concise-router",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A concise router base on react-router. ",
   "main": "index.js",
   "devDependencies": {
