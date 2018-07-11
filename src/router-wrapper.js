@@ -19,7 +19,16 @@ export default class RouterWrapper extends React.Component {
     }
   }
   componentWillMount () {
-    this.props.router.beforeEach && this.props.router.beforeEach(this.props, this.done())
+    if (this.props.router.beforeEach) {
+      if (typeof this.props.router.beforeEach !== 'function') {
+        throw new Error('The `router.beforeEach` must be a function.')
+      }
+      this.props.router.beforeEach(this.props, this.done())
+    } else {
+      this.setState({
+        waiting: false
+      })
+    }
   }
   render () {
     if (this.state.waiting) return null
