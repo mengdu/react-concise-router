@@ -1,3 +1,20 @@
-a{
+a {
   margin: 0 5px;
+}
+.demo-block {
+  width: 600px;
+  height: 300px;
+  border: solid 1px #1FADF2;
+  padding: 15px;
+  margin: 0 auto;
+}
+.link-active {
+  font-weight: bold;
+  color: #E04843;
+}
+
+.anim-list .anim-item {
+  margin-bottom: 10px;
+  background: #ddd;
+  padding: 10px;
 }

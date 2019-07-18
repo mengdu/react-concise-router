@@ -1,13 +1,12 @@
 import React from 'react'
 import Navbar from '../components/navbar'
 
-export default class Home extends React.Component {
+export default class About extends React.Component {
   render () {
-    console.log(this.props)
     return (
       <div>
         <Navbar />
-        <p>Home Page</p>
+        <p>About Page</p>
       </div>
     )
   }
