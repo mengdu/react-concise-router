@@ -2,7 +2,7 @@
 * @param {string} path 路径
 * @return {string} 返回连接路径
 **/
-export function reslove () {
+export function resolve () {
   let paths = []
   for (let i in arguments) {
     paths.push(arguments[i].replace(/^\s*|\s*$/g, '').replace(/^\//, ''))
