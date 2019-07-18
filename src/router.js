@@ -1,54 +1,83 @@
 import React from 'react'
 import {HashRouter, BrowserRouter, Route, Switch, Link} from 'react-router-dom'
 import RouterWrapper from './router-wrapper'
-import {reslove, compileString, objectToQueryString} from './utils'
+import {resolve, compileString, objectToQueryString} from './utils'
+import RcQueueAnim from 'rc-queue-anim';
 
-function makeRoute (route, router) {
-  // render={(props) => <RouterWrapper {...props}>{route.component}</RouterWrapper>}
-  // component={route.component}
+function generateRoute (route, router) {
   return (
     <Route
       exact={route.exact}
       path={route.path}
       key={route.name ? route.name : route.path}
-      render={(props) => <RouterWrapper {...props} route={route} router={router}>{route.component}</RouterWrapper>}
+      strict={route.strict}
+      sensitive={route.sensitive}
+      render={(props) => {
+        return (
+          <RouterWrapper {...props} route={route} router={router}>
+            {route.component}
+          </RouterWrapper>
+        )
+      }}
       />
   )
 }
 
 export default class Router {
   constructor (options) {
-    let routes = options.routes
-    this.routes = []
+    const routes = options.routes
+    this.routes = options.routes
+
     if (options.mode && ['hash', 'history'].indexOf(options.mode.toLocaleLowerCase()) === -1) {
       throw new Error('The options.mode value must be \'hash\' or \'history\'.')
     }
+
     this.mode = options.mode || 'history'
-    this.routerMap = {
+
+    // 存视图
+    this.views = {
       'default': []
     }
 
-    for (let i in routes) {
+    // 存过渡定义
+    this.transitions = {
+      'default': options.wrapper
+    }
+
+    // 构造 views
+    for (let i = 0; i < routes.length; i++) {
       if (Array.isArray(routes[i].children)) {
-        this.routerMap['default'].unshift(makeRoute({...routes[i], exact: false}, this))
-        this.routerMap[routes[i].name] = []
-        for (let j in routes[i].children) {
-          let child = routes[i].children[j]
-          let path = ''
-          // 非404页面需要处理下路径
-          if (child.path && child.path !== '*') {
-            path = reslove('/', routes[i].path, routes[i].children[j].path)
+        // 路由视图要禁用完全匹配
+        routes[i].exact = false
+
+        // 父视图也要放到default里
+        this.views['default'].unshift(generateRoute(routes[i], this))
+
+        if (routes[i].wrapper) {
+          this.transitions[routes[i].name] = routes[i].wrapper
+        }
+
+        if (!routes[i].name) throw new Error('Routes with `children` must provide the `name` attribute')
+
+        this.views[routes[i].name] = []
+
+        for (let j = 0; j < routes[i].children.length; j++) {
+          const child = routes[i].children[j]
+          child.exact = true
+
+          // 连接父级 path
+          if (typeof child.path !== 'undefined') {
+            child.path = '/' + resolve(routes[i].path, child.path)
           }
-          this.routes.push({...child, path})
-          this.routerMap[routes[i].name].push(makeRoute({
-            ...routes[i].children[j],
-            exact: true,
-            path: path
-          }, this))
+
+          const route = generateRoute(child, this)
+
+          this.views[routes[i].name].push(route)
         }
       } else {
-        this.routes.push(routes[i])
-        this.routerMap['default'].push(makeRoute({...routes[i], exact: true}, this))
+        routes[i].exact = true
+        const route = generateRoute(routes[i], this)
+        this.views['default'].push(route)
       }
     }
   }
@@ -72,34 +101,36 @@ export default class Router {
   **/
   get view () {
     const RouterView = (props) => {
+      const that = this
       const name = props.name || 'default'
-      if (!this.routerMap[name]) throw new Error('The view name `' + name + '` is not defined.')
-      let that = this
+
+      if (!this.views[name]) throw new Error('The view name `' + name + '` is not defined.')
+
+      const wrapper = this.transitions[name]
+
+      function Fade (props) {
+        return typeof wrapper === 'function' ? wrapper(props.children) : props.children
+      }
+
       if (name === 'default') {
         if (this.mode === 'hash') {
           return (
             <HashRouter>
-              <Switch>
-                {that.routerMap[name]}
-              </Switch>
+              <Fade><Switch key="switch">{that.views[name]}</Switch></Fade>
             </HashRouter>
           )
         } else {
           return (
             <BrowserRouter>
-              <Switch>
-                {that.routerMap[name]}
-              </Switch>
+              <Fade><Switch key="switch">{that.views[name]}</Switch></Fade>
             </BrowserRouter>
           )
         }
       }
-      return (
-        <Switch>
-          {that.routerMap[name]}
-        </Switch>
-      )
+
+      return <Fade><Switch key="switch">{that.views[name]}</Switch></Fade>
     }
+  
     return RouterView
   }
   
