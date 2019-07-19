@@ -55,7 +55,7 @@
     "start": "node scripts/start.js",
     "build:docs": "node scripts/docs.js",
     "build": "node scripts/pack.js",
-    "serve": "php -S localhost:3004 -t docs",
+    "serve": "dev serve -o -p 3000 -d ./docs",
     "test": "node scripts/test.js --env=jsdom"
   },
   "files": [
