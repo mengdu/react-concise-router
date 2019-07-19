@@ -2,7 +2,6 @@ import React from 'react'
 import {HashRouter, BrowserRouter, Route, Switch, Link} from 'react-router-dom'
 import RouterWrapper from './router-wrapper'
 import {resolve, compileString, objectToQueryString} from './utils'
-import RcQueueAnim from 'rc-queue-anim';
 
 function generateRoute (route, router) {
   return (
@@ -108,27 +107,31 @@ export default class Router {
 
       const wrapper = this.transitions[name]
 
+      // 切换过渡包裹组件
       function Fade (props) {
-        return typeof wrapper === 'function' ? wrapper(props.children) : props.children
+        return <Route render={({ location }) => {
+          // location for react-transition-group
+          return typeof wrapper === 'function' ? wrapper(props.children, location) : props.children
+        }} />
       }
 
       if (name === 'default') {
         if (this.mode === 'hash') {
           return (
             <HashRouter>
-              <Fade><Switch key="switch">{that.views[name]}</Switch></Fade>
+              <Fade><Switch key="switch1">{that.views[name]}</Switch></Fade>
             </HashRouter>
           )
         } else {
           return (
             <BrowserRouter>
-              <Fade><Switch key="switch">{that.views[name]}</Switch></Fade>
+              <Fade><Switch key="switch2">{that.views[name]}</Switch></Fade>
             </BrowserRouter>
           )
         }
       }
 
-      return <Fade><Switch key="switch">{that.views[name]}</Switch></Fade>
+      return <Fade><Switch key="switch3">{that.views[name]}</Switch></Fade>
     }
   
     return RouterView
