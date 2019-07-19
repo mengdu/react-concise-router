@@ -38,8 +38,8 @@ export default class Router {
       'default': []
     }
 
-    // 存过渡定义
-    this.transitions = {
+    // 包裹组件映射
+    this.wrappers = {
       'default': options.wrapper
     }
 
@@ -53,7 +53,7 @@ export default class Router {
         this.views['default'].unshift(generateRoute(routes[i], this))
 
         if (routes[i].wrapper) {
-          this.transitions[routes[i].name] = routes[i].wrapper
+          this.wrappers[routes[i].name] = routes[i].wrapper
         }
 
         if (!routes[i].name) throw new Error('Routes with `children` must provide the `name` attribute')
@@ -105,7 +105,7 @@ export default class Router {
 
       if (!this.views[name]) throw new Error('The view name `' + name + '` is not defined.')
 
-      const wrapper = this.transitions[name]
+      const wrapper = this.wrappers[name]
 
       // 切换过渡包裹组件
       function Fade (props) {
@@ -147,20 +147,21 @@ export default class Router {
   * @param {string} args.hash hash值
   * @return {string} 返回url
   **/
-  route (args) {
-    if (!args || typeof args !== 'object') {
-      throw new Error('The arguments[0] must be an object.')
-    }
-    let {params, query, hash, path, name} = args
+  route ({ params = {}, query = {}, hash, path, name }) {
     if (name) {
-      let route = this.routes.filter(e => e.name === name)[0]
-      if (!route) throw new Error('The name \'' + name + '\' is not found in route list.')
+      const route = this.routes.filter(e => e.name === name)[0]
+
+      if (!route) throw new Error('The name \'' + name + '\' is cannot found in routes')
+
       path = route.path
     }
+  
     path = compileString(path)(params)
-    const queryString = query ? ('?' + objectToQueryString(query)) : ''
+
+    const queryString = query ? (objectToQueryString(query)) : ''
+
     hash = hash ? ('#' + hash) : ''
 
-    return `${path}${queryString}${hash}`
+    return `${path}${queryString ? '?' + queryString : ''}${hash}`
   }
 }
