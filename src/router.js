@@ -1,5 +1,5 @@
 import React from 'react'
-import {HashRouter, BrowserRouter, Route, Switch, Link} from 'react-router-dom'
+import {HashRouter, BrowserRouter, Route, Switch, Link, NavLink} from 'react-router-dom'
 import RouterWrapper from './router-wrapper'
 import {resolve, compileString, objectToQueryString} from './utils'
 
@@ -88,7 +88,10 @@ export default class Router {
   **/
   get link () {
     const RouterLink = (props) => {
-      return <Link to={typeof props.to === 'object' ? this.route(props.to) : props.to}>{props.children}</Link>
+      if (props.type === 'NavLink') {
+        return <NavLink { ...props } to={typeof props.to === 'object' ? this.route(props.to) : props.to}>{props.children}</NavLink>
+      }
+      return <Link { ...props } to={typeof props.to === 'object' ? this.route(props.to) : props.to}>{props.children}</Link>
     }
     return RouterLink
   }
