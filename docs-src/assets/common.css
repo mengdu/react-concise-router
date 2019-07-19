@@ -3,7 +3,7 @@ a {
 }
 .demo-block {
   width: 600px;
-  height: 300px;
+  min-height: 300px;
   border: solid 1px #1FADF2;
   padding: 15px;
   margin: 0 auto;
@@ -18,3 +18,5 @@ a {
   background: #ddd;
   padding: 10px;
 }
+
+@import url('./anim.css');

@@ -11,6 +11,9 @@ import Dashboard from './views/admin/Dashboard'
 import Page1 from './views/admin/page1'
 import Page2 from './views/admin/page2'
 import QueueAnim from 'rc-queue-anim'
+// import { TransitionGroup, CSSTransition } from 'react-transition-group'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 const Loading = () => <div>Loading...</div>
 
@@ -20,11 +23,17 @@ const Page3 = Loadable({
   delay: 5000
 })
 
+console.log(Page3)
+
 const router = new Router ({
-  mode: 'hash',
-  wrapper: function (route) {
-    return <QueueAnim type={['right', 'left']}>{route}</QueueAnim>
-  },
+  // mode: 'hash',
+  // wrapper: function (route, location) {
+  //   // key for CSSTransition
+  //   const key = location.pathname.indexOf('/admin') === 0 ? '/admin' : location.key
+  //   // TransitionGroup 过渡会使路由执行两次，目前不知道原因
+  //   // return <TransitionGroup><CSSTransition timeout={300}  classNames="fade-in" key={key}>{route}</CSSTransition></TransitionGroup>
+  //   return <QueueAnim type={['right', 'left']}>{route}</QueueAnim>
+  // },
   routes: [
     { path: '/', component: Home },
     { path: '/user', component: User },
@@ -34,8 +43,9 @@ const router = new Router ({
       path: '/admin',
       name: 'admin-view',
       component: view,
-      wrapper: function (route) {
+      wrapper: function (route, location) {
         return <QueueAnim type={['right', 'left']}>{route}</QueueAnim>
+        // return <SwitchTransition><CSSTransition timeout={300}  classNames="fade-in" key={location.key}>{route}</CSSTransition></SwitchTransition>
       },
       children: [
         { path: '', component: Dashboard, meta: { title: 'Admin dashboard' } },
@@ -49,16 +59,15 @@ const router = new Router ({
   ]
 })
 
-// router.beforeEach = function (ctx, next) {
-//   console.log('start', ctx)
-//   if (ctx.route.name === 'info') {
-//     next('/')
-//   } else {
-//     setTimeout(() => {
-//       next()
-//     }, 100)
-//   }
-// }
+router.beforeEach = function (ctx, next) {
+  console.log('start', ctx)
+  NProgress.start()
+  next()
+  NProgress.inc(0.4)
+  setTimeout(() => {
+    NProgress.done()
+  }, 200)
+}
 
 console.log(router)
 
