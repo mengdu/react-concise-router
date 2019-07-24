@@ -23,7 +23,11 @@ const Page3 = Loadable({
   delay: 5000
 })
 
-console.log(Page3)
+function anim (Page) {
+  return function (props) {
+    return <QueueAnim type={['right', 'left']}><Page key="anim" {...props} /></QueueAnim>
+  }
+}
 
 const router = new Router ({
   // mode: 'hash',
@@ -36,21 +40,22 @@ const router = new Router ({
   // },
   routes: [
     { path: '/', component: Home },
-    { path: '/user', component: User },
+    { path: '/user', component: anim(User) },
     { path: '/user/:userId', component: UserInfo },
     { path: '/about', component: About },
     { 
       path: '/admin',
       name: 'admin-view',
       component: view,
-      wrapper: function (route, location) {
-        return <QueueAnim type={['right', 'left']}>{route}</QueueAnim>
-        // return <SwitchTransition><CSSTransition timeout={300}  classNames="fade-in" key={location.key}>{route}</CSSTransition></SwitchTransition>
-      },
+      // wrapper: function (route, location) {
+      //   console.log(location)
+      //   return <QueueAnim type={['right', 'left']}>{route}</QueueAnim>
+      //   // return <TransitionGroup><CSSTransition timeout={300}  classNames="fade-in" key={location.key}>{route}</CSSTransition></TransitionGroup>
+      // },
       children: [
-        { path: '', component: Dashboard, meta: { title: 'Admin dashboard' } },
-        { path: 'page1', component: Page1 },
-        { path: '/page2', component: Page2 },
+        { path: '', component: anim(Dashboard), meta: { title: 'Admin dashboard' } },
+        { path: 'page1', component: anim(Page1) },
+        { path: '/page2', component: anim(Page2) },
         { path: 'page3', component: Page3 },
         { path: '*', component: ErrorPage } // /admin/other 的 404页面
       ]
