@@ -15,7 +15,7 @@ export default class View extends React.Component {
           <NavLink to="/admin/page3" activeClassName="link-active" exact>page3</NavLink>
           <NavLink to="/admin/other" activeClassName="link-active" exact>404</NavLink>
         </div>
-        <div><router.view name="admin-view" /></div>
+        <div>{router.view('admin-view')}</div>
       </div>
     )
   }

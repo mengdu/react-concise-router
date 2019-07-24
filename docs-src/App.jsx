@@ -16,7 +16,7 @@ export default class App extends React.Component {
         </p> */}
         
         <div className="demo-block">
-          <router.view />
+          {router.view()}
         </div>
       </div>
     )
