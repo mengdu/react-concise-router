@@ -1,7 +1,8 @@
 import React from 'react'
-import {HashRouter, BrowserRouter, Route, Switch, Link, NavLink} from 'react-router-dom'
+import { Route, Link, NavLink } from 'react-router-dom'
 import RouterWrapper from './router-wrapper'
-import {resolve, compileString, objectToQueryString} from './utils'
+import RouterView from './router-view'
+import { resolve, compileString, objectToQueryString } from './utils'
 
 function generateRoute (route, router) {
   return (
@@ -98,46 +99,11 @@ export default class Router {
 
   /**
   * 路由出口
-  * e.g: <router.view />
+  * e.g: {router.view(name)}
   * @props {string} name 子路由名称，默认default，根路由
   **/
-  get view () {
-    const RouterView = (props) => {
-      const that = this
-      const name = props.name || 'default'
-
-      if (!this.views[name]) throw new Error('The view name `' + name + '` is not defined.')
-
-      const wrapper = this.wrappers[name]
-
-      // 切换过渡包裹组件
-      function Fade (props) {
-        return <Route render={({ location }) => {
-          // location for react-transition-group
-          return typeof wrapper === 'function' ? wrapper(props.children, location) : props.children
-        }} />
-      }
-
-      if (name === 'default') {
-        if (this.mode === 'hash') {
-          return (
-            <HashRouter>
-              <Fade><Switch key="switch1">{that.views[name]}</Switch></Fade>
-            </HashRouter>
-          )
-        } else {
-          return (
-            <BrowserRouter>
-              <Fade><Switch key="switch2">{that.views[name]}</Switch></Fade>
-            </BrowserRouter>
-          )
-        }
-      }
-
-      return <Fade><Switch key="switch3">{that.views[name]}</Switch></Fade>
-    }
-  
-    return RouterView
+  view (name) {
+    return <RouterView name={name} router={this} />
   }
   
   /**
